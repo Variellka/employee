@@ -3,18 +3,32 @@ import {authorization, setHeader} from "./Login_user/authorization.js";
 import {addNewUser} from "./Login_user/registration.js";
 import {loadSettings} from "./Main_components/settings.js";
 import {handleCardClick} from "./Main_components/detail_card.js";
-import {makeTableView, makeGridView} from "./Main_components/employee_list_view.js";
+import {makeGridView, makeTableView} from "./Main_components/employee_list_view.js";
 
-window.onload = function() {
+let authUser;
+
+function getAuthUser() {
+    authUser = JSON.parse(localStorage.getItem("currentUser"));
+}
+
+window.onload = function () {
     loadServer();
-    let authUser = JSON.parse(localStorage.getItem("currentUser"));
+    getAuthUser();
     if (authUser) {
         setHeader(authUser);
     } else signInModal();
 };
 
-window.addEventListener("load", function() {
+function checkAndDisplayElement(role, elementId) {
+    if (!authUser.roles.includes(role)) {
+        document.getElementById(elementId).style.display = 'none';
+    }
+}
+
+window.addEventListener("load", function () {
+    checkAndDisplayElement('admin', 'tab-3');
     let myTabs = document.querySelectorAll("ul.nav-tabs > li");
+
     function myTabClicks(tabClickEvent) {
         for (let i = 0; i < myTabs.length; i++) {
             myTabs[i].classList.remove("active");
@@ -38,18 +52,19 @@ window.addEventListener("load", function() {
             employeesList.style.display = 'block';
         }
     }
+
     for (let i = 0; i < myTabs.length; i++) {
         myTabs[i].addEventListener("click", myTabClicks)
     }
 
 });
 
-function loadServer () {
+function loadServer() {
     let xhr = new XMLHttpRequest();
     xhr.open('GET', 'http://127.0.0.1:3000/api/users');
     xhr.send();
 
-    xhr.onload = function() {
+    xhr.onload = function () {
         if (xhr.status !== 200) {
             console.log(`Ошибка ${xhr.status}: ${xhr.statusText}`);
         } else {
@@ -112,7 +127,7 @@ function searchEmployees() {
     xhr.open('GET', 'http://127.0.0.1:3000/api/users');
     xhr.send();
 
-    xhr.onload = function() {
+    xhr.onload = function () {
         if (xhr.status !== 200) {
             console.log(`Ошибка ${xhr.status}: ${xhr.statusText}`);
         } else {

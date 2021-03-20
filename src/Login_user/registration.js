@@ -1,3 +1,5 @@
+import {Admin, User} from "./user";
+
 export function addNewUser() {
     let newName = document.querySelector('.sign-up-name').value,
         newEmail = document.querySelector('.sign-up-email').value,
@@ -11,13 +13,17 @@ export function addNewUser() {
 
     let xhr = new XMLHttpRequest();
 
-    let newUser = {
+    /*let newUser = {
         name: newName,
         email: newEmail,
         password: newPassword,
         nativeName: newNativeName,
         gender: newGender
-    };
+    };*/
+    
+    // let newUser = new User(newName, newPassword);
+
+    let admin = new Admin(newName, newPassword);
     let json = JSON.stringify(newUser);
 
     let headers = new Headers();
